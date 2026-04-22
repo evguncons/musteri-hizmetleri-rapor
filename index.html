@@ -4,43 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Otomatik Performans Raporu | Hedef AVM</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- html2pdf.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
-                    colors: {
-                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985' },
-                    }
+                    colors: { brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 800: '#075985' } }
                 }
             }
         }
     </script>
     <style>
         body { background-color: #f8fafc; color: #334155; }
-        .input-label { display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #64748b; margin-bottom: 0.5rem; letter-spacing: 0.05em; }
         .input-field { width: 100%; padding: 0.75rem 1rem; font-size: 0.95rem; font-weight: 600; color: #1e293b; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 0.75rem; outline: none; transition: all 0.2s; cursor: pointer; }
         .input-field:focus { background-color: #ffffff; border-color: #0ea5e9; box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1); }
         .card { background: white; border-radius: 1.25rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02); }
-        
-        /* Select element oku için */
-        .select-field {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 1rem center;
-            background-repeat: no-repeat;
-            background-size: 1.25em 1.25em;
-        }
-
+        .select-field { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 1rem center; background-repeat: no-repeat; background-size: 1.25em 1.25em; }
         .loader-spinner { border: 4px solid #f1f5f9; border-top: 4px solid #0ea5e9; border-radius: 50%; width: 3rem; height: 3rem; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -48,68 +31,61 @@
 <body class="min-h-screen py-10 px-4 relative">
 
     <!-- LOGIN SCREEN -->
-    <div id="loginScreen" class="fixed inset-0 z-[90] bg-slate-100 flex items-center justify-center p-4">
-        <div class="bg-white p-8 md:p-10 rounded-3xl shadow-2xl border border-slate-200 w-full max-w-md text-center">
-            <div class="w-20 h-20 bg-gradient-to-br from-brand-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-200 text-white mx-auto mb-6 transform rotate-3">
+    <div id="loginScreen" class="fixed inset-0 z-[100] bg-slate-100 flex items-center justify-center p-4">
+        <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-200 w-full max-w-md text-center">
+            <div class="w-20 h-20 bg-brand-600 rounded-3xl flex items-center justify-center shadow-xl shadow-brand-200 text-white mx-auto mb-6 transform rotate-3">
                 <i class="fas fa-lock text-3xl"></i>
             </div>
             <h2 class="text-2xl font-black text-slate-800 mb-2">HEDEF AVM</h2>
-            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-8">OTOMATİK RAPOR SİSTEMİ</p>
-            
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-8">RAPOR SİSTEMİ</p>
             <form id="loginForm" class="space-y-4">
-                <div class="relative">
-                    <i class="fas fa-key absolute left-4 top-4 text-slate-400"></i>
-                    <input type="password" id="loginPass" class="input-field pl-10 h-12 text-lg text-center tracking-widest placeholder:tracking-normal placeholder:text-sm" placeholder="Şifrenizi Giriniz">
-                </div>
-                <button type="submit" class="w-full h-12 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl shadow-lg shadow-brand-200/50 transition-all text-base">GİRİŞ YAP</button>
+                <input type="password" id="loginPass" class="input-field text-center tracking-widest h-14" placeholder="Şifrenizi Giriniz">
+                <button type="submit" class="w-full h-14 bg-brand-600 hover:bg-brand-700 text-white font-black rounded-2xl shadow-lg transition-all">GİRİŞ YAP</button>
             </form>
-            <p id="loginError" class="text-rose-500 text-xs font-bold mt-4 hidden"><i class="fas fa-exclamation-circle mr-1"></i> Hatalı Şifre!</p>
+            <p id="loginError" class="text-rose-500 text-xs font-bold mt-4 hidden">Hatalı Şifre!</p>
         </div>
     </div>
 
     <!-- YÜKLEME EKRANI -->
-    <div id="loadingOverlay" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex flex-col items-center justify-center transition-all duration-300 hidden">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center text-center max-w-sm w-full">
-            <div class="loader-spinner mb-4"></div>
-            <h3 class="text-xl font-bold text-slate-800">Veriler Çekiliyor</h3>
-            <p class="text-sm text-slate-500 font-medium mt-2">Sistemdeki güncel kayıtlar analiz ediliyor, lütfen bekleyin...</p>
-        </div>
+    <div id="loadingOverlay" class="fixed inset-0 z-[110] bg-white/80 backdrop-blur flex flex-col items-center justify-center hidden">
+        <div class="loader-spinner mb-4"></div>
+        <h3 class="text-xl font-bold text-slate-800 tracking-tight">Veriler Çekiliyor...</h3>
     </div>
 
-    <!-- ANA UYGULAMA (Girişten Sonra Görünür) -->
-    <div id="mainApp" class="max-w-4xl mx-auto hidden">
-        <!-- HEADER -->
-        <header class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+    <!-- ANA UYGULAMA -->
+    <div id="mainApp" class="max-w-4xl mx-auto hidden relative z-10">
+        <header class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm">
             <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-gradient-to-br from-brand-600 to-indigo-700 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-brand-200 transform rotate-3">
+                <div class="w-14 h-14 bg-brand-600 rounded-2xl flex items-center justify-center text-white shadow-lg transform -rotate-3">
                     <i class="fas fa-chart-line text-2xl"></i>
                 </div>
                 <div>
                     <h1 class="text-2xl font-black text-slate-800 tracking-tight">Performans Raporu</h1>
-                    <p class="text-slate-500 font-bold text-sm tracking-wide uppercase mt-1">OTOMATİK VERİ ÇEKİM SİSTEMİ</p>
+                    <p class="text-slate-400 font-bold text-xs uppercase tracking-widest">OTOMATİK VERİ ÇEKİMİ</p>
                 </div>
             </div>
-            <button onclick="fetchData()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-colors text-sm flex items-center gap-2">
-                <i class="fas fa-sync-alt text-brand-600"></i> Verileri Yenile
+            <button onclick="fetchData()" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl transition-all text-sm flex items-center gap-2">
+                <i class="fas fa-sync-alt text-brand-600"></i> Yenile
             </button>
         </header>
 
-        <!-- FILTERS -->
-        <div class="card p-6 md:p-8 mb-8">
-            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-100">
-                <div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center"><i class="fas fa-filter"></i></div>
-                <h2 class="text-lg font-bold text-slate-800">Filtreler</h2>
-            </div>
-
+        <div class="card p-8 mb-8 bg-white">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="input-label">Temsilci Seçin</label>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Temsilci Seçin</label>
                     <select id="agentFilter" class="input-field select-field" onchange="updateDashboard()">
                         <option value="all">Tüm Temsilciler</option>
+                        <option value="BURCU KÖSALI">BURCU KÖSALI</option>
+                        <option value="ELVAN ATAK">ELVAN ATAK</option>
+                        <option value="SEVAL TEKOĞUL">SEVAL TEKOĞUL</option>
+                        <option value="FEYZA NUR DİLEK">FEYZA NUR DİLEK</option>
+                        <option value="CANSU IŞIK">CANSU IŞIK</option>
+                        <option value="TUĞÇE TANRIVERDİ">TUĞÇE TANRIVERDİ</option>
+                        <option value="ESRA ERDOĞAN">ESRA ERDOĞAN</option>
                     </select>
                 </div>
                 <div>
-                    <label class="input-label">Dönem Seçin</label>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Dönem Seçin</label>
                     <select id="periodFilter" class="input-field select-field" onchange="updateDashboard()">
                         <option value="all">Tüm Zamanlar</option>
                     </select>
@@ -117,114 +93,91 @@
             </div>
         </div>
 
-        <!-- DASHBOARD (Özet Görüntü) -->
-        <div class="card p-6 md:p-8 mb-8">
-            <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-500 flex items-center justify-center"><i class="fas fa-tachometer-alt"></i></div>
-                    <h2 class="text-lg font-bold text-slate-800">Önizleme İstatistikleri</h2>
-                </div>
-                <span id="recordCountBadge" class="bg-slate-100 text-slate-600 px-3 py-1 rounded-lg text-xs font-bold border border-slate-200">0 Kayıt</span>
+        <div class="card p-8 bg-white">
+            <div class="flex items-center justify-between mb-8 pb-4 border-b border-slate-100">
+                <h2 class="text-lg font-black text-slate-800 flex items-center gap-2"><i class="fas fa-chart-simple text-brand-500"></i> İstatistik Önizleme</h2>
+                <span id="recordCountBadge" class="bg-slate-100 text-slate-500 px-3 py-1 rounded-lg text-[10px] font-black uppercase border border-slate-200">0 Kayıt</span>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center">
-                    <div class="text-slate-500 text-xs font-extrabold uppercase tracking-widest mb-2">Toplam Çağrı</div>
-                    <div id="statTotal" class="text-3xl font-black text-slate-800">0</div>
+                <div class="bg-slate-50 p-6 rounded-[1.5rem] border border-slate-200 text-center">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Toplam</p>
+                    <div id="statTotal" class="text-4xl font-black text-slate-800 leading-none">0</div>
                 </div>
-                <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 text-center">
-                    <div class="text-emerald-600 text-xs font-extrabold uppercase tracking-widest mb-2">Çözümlenen</div>
-                    <div id="statResolved" class="text-3xl font-black text-emerald-700">0</div>
+                <div class="bg-emerald-50 p-6 rounded-[1.5rem] border border-emerald-100 text-center">
+                    <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2">Çözülen</p>
+                    <div id="statResolved" class="text-4xl font-black text-emerald-700 leading-none">0</div>
                 </div>
-                <div class="bg-amber-50 border border-amber-100 rounded-2xl p-5 text-center">
-                    <div class="text-amber-600 text-xs font-extrabold uppercase tracking-widest mb-2">Tekrar / Bekleyen</div>
-                    <div id="statPending" class="text-3xl font-black text-amber-700">0</div>
+                <div class="bg-amber-50 p-6 rounded-[1.5rem] border border-amber-100 text-center">
+                    <p class="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-2">Bekleyen</p>
+                    <div id="statPending" class="text-4xl font-black text-amber-700 leading-none">0</div>
                 </div>
-                <div class="bg-brand-50 border border-brand-100 rounded-2xl p-5 text-center flex flex-col justify-center">
-                    <div class="text-brand-600 text-xs font-extrabold uppercase tracking-widest mb-2">Çözüm Oranı</div>
-                    <div id="statRate" class="text-3xl font-black text-brand-700">%0</div>
+                <div class="bg-brand-50 p-6 rounded-[1.5rem] border border-brand-100 text-center">
+                    <p class="text-[10px] font-black text-brand-600 uppercase tracking-widest mb-2">Oran</p>
+                    <div id="statRate" class="text-4xl font-black text-brand-700 leading-none">%0</div>
                 </div>
             </div>
 
-            <div class="border-t border-slate-100 pt-6">
-                <button onclick="generatePDF()" id="pdfBtn" class="w-full py-4 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-lg shadow-rose-200 transition-all flex items-center justify-center gap-3 text-lg">
-                    <i class="fas fa-file-pdf text-xl"></i> Seçili Filtrelere Göre PDF Raporu Oluştur
-                </button>
-            </div>
+            <button onclick="generatePDF()" id="pdfBtn" class="w-full py-5 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-2xl shadow-xl shadow-rose-100 transition-all flex items-center justify-center gap-3 text-lg group">
+                <i class="fas fa-file-pdf text-2xl group-hover:scale-110 transition-transform"></i> PDF RAPORU OLUŞTUR VE İNDİR
+            </button>
         </div>
     </div>
 
-    <!-- JS LOGIC -->
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbzmh0TtUPRgqXpX3mZ7OvytgEg--MBKheEA46hXl7gLTjc23wEahTGugctfGopeikjI4g/exec";
         let allData = [];
         let filteredData = [];
 
-        // GİRİŞ KONTROLÜ
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const pass = document.getElementById('loginPass').value;
-            if(pass === '134679') {
-                document.getElementById('loginScreen').style.display = 'none';
+            if(document.getElementById('loginPass').value === '134679') {
+                document.getElementById('loginScreen').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
-                fetchData(); // Sadece şifre doğruysa verileri çek
+                fetchData();
             } else {
                 document.getElementById('loginError').classList.remove('hidden');
-                document.getElementById('loginPass').classList.add('border-rose-500', 'ring-2', 'ring-rose-200');
             }
         });
 
         async function fetchData() {
-            const overlay = document.getElementById('loadingOverlay');
-            overlay.classList.remove('hidden');
-            
+            document.getElementById('loadingOverlay').classList.remove('hidden');
             try {
-                // Cache engellemek için parametre ekle
-                const targetUrl = `${API_URL}${API_URL.includes('?') ? '&' : '?'}t=${new Date().getTime()}`;
+                const targetUrl = `${API_URL}${API_URL.includes('?') ? '&' : '?'}t=${Date.now()}`;
                 const response = await fetch(targetUrl);
                 const rawData = await response.json();
                 
-                // Verileri temizle
                 allData = rawData.filter(item => {
                     const m = (item.musteri || "").toString().trim();
                     const d = (item.tarih || "").toString().trim();
-                    if (m === "" || d === "" || d === "undefined") return false;
-                    const mLower = m.toLowerCase();
-                    if (mLower.includes("ad soyad") || mLower.includes("müşteri") || mLower === "adı soyadı") return false;
+                    if (m === "" || d === "" || d === "undefined" || m.toLowerCase().includes("ad soyad")) return false;
                     return true;
-                }).map(item => ({
-                    tarih: item.tarih, 
-                    musteri: item.musteri, 
-                    telefon: String(item.telefon || ""), 
-                    konu: item.konu, 
-                    durum: item.durum, 
-                    temsilci: String(item.temsilci || "").trim().toUpperCase(), 
-                    bolge: item.bolge, 
-                    donem: item.donem
-                }));
+                }).map(item => {
+                    let temsilciAdi = String(item.temsilci || "").trim().toUpperCase();
+                    // Olası yazım hatasını düzeltip filtreye dahil etmek için
+                    if (temsilciAdi === "TUĞÇE TANRIVEDİ") temsilciAdi = "TUĞÇE TANRIVERDİ";
+
+                    return {
+                        tarih: item.tarih, musteri: item.musteri, 
+                        durum: (item.durum || "").toUpperCase(), 
+                        temsilci: temsilciAdi, 
+                        donem: item.donem
+                    };
+                });
 
                 populateDropdowns();
                 updateDashboard();
-
             } catch(e) {
-                console.error("Veri çekme hatası:", e);
-                alert("Veriler çekilirken bir hata oluştu. Lütfen sayfayı yenileyin.");
+                alert("Veri çekme hatası oluştu.");
             } finally {
-                overlay.classList.add('hidden');
+                document.getElementById('loadingOverlay').classList.add('hidden');
             }
         }
 
         function populateDropdowns() {
-            const agentSelect = document.getElementById('agentFilter');
             const periodSelect = document.getElementById('periodFilter');
-
-            const currentAgent = agentSelect.value;
             const currentPeriod = periodSelect.value;
-
-            const agents = [...new Set(allData.map(d => d.temsilci).filter(d => d))].sort();
-            agentSelect.innerHTML = '<option value="all">Tüm Temsilciler</option>' + agents.map(a => `<option value="${a}">${a}</option>`).join('');
-            if(agents.includes(currentAgent)) agentSelect.value = currentAgent;
-
+            
             const periods = [...new Set(allData.map(d => d.donem).filter(d => d))].sort();
             periodSelect.innerHTML = '<option value="all">Tüm Zamanlar</option>' + periods.map(p => `<option value="${p}">${p}</option>`).join('');
             if(periods.includes(currentPeriod)) periodSelect.value = currentPeriod;
@@ -239,8 +192,8 @@
             if (periodVal !== 'all') filteredData = filteredData.filter(d => d.donem === periodVal);
 
             const total = filteredData.length;
-            const resolved = filteredData.filter(d => (d.durum || "").match(/ÇÖZÜMLENDİ|MEMNUN|İBAN/i)).length;
-            const pending = filteredData.filter(d => (d.durum || "").toUpperCase().includes("TEKRAR")).length;
+            const resolved = filteredData.filter(d => d.durum.match(/ÇÖZÜMLENDİ|MEMNUN|İBAN|BİLGİ VERİLDİ/)).length;
+            const pending = filteredData.filter(d => d.durum.includes("TEKRAR")).length;
             const successRate = total > 0 ? Math.round((resolved / total) * 100) : 0;
 
             document.getElementById('statTotal').textContent = total;
@@ -250,163 +203,128 @@
             document.getElementById('recordCountBadge').textContent = `${total} Kayıt`;
         }
 
-        function formatDisplayDate(raw) {
-            if (!raw) return "-";
-            const str = String(raw);
-            if (str.includes('T')) {
-                const parts = str.split('T');
-                const d = parts[0].split('-');
-                return `${d[2]}.${d[1]}.${d[0]}`; 
-            }
-            if (str.match(/^\d{4}-\d{2}-\d{2}$/)) {
-                const p = str.split('-');
-                return `${p[2]}.${p[1]}.${p[0]}`;
-            }
-            return str;
-        }
-
         function generatePDF() {
-            if(filteredData.length === 0) {
-                alert("Seçili filtrelere uygun kayıt bulunamadı. Rapor oluşturulamaz.");
-                return;
-            }
-
             const agentSelect = document.getElementById('agentFilter');
             const periodSelect = document.getElementById('periodFilter');
             const agentText = agentSelect.options[agentSelect.selectedIndex].text;
             const periodText = periodSelect.options[periodSelect.selectedIndex].text;
             
-            const totalCalls = document.getElementById('statTotal').textContent;
-            const resolvedCalls = document.getElementById('statResolved').textContent;
-            const pendingCalls = document.getElementById('statPending').textContent;
-            const successRate = document.getElementById('statRate').textContent.replace('%', '');
+            const stats = {
+                total: document.getElementById('statTotal').textContent,
+                resolved: document.getElementById('statResolved').textContent,
+                pending: document.getElementById('statPending').textContent,
+                rate: document.getElementById('statRate').textContent
+            };
 
-            const content = document.createElement('div');
-            content.style.position = 'absolute';
-            content.style.top = '0';
-            content.style.left = '0';
-            content.style.zIndex = '-9999';
-            content.style.width = '800px'; 
-            content.style.backgroundColor = '#ffffff';
-            document.body.appendChild(content);
+            // 1. KESİN ÇÖZÜM: Beyaz sayfa sorununu engellemek için element DOM'un en üstüne eklenir
+            // z-index: -1 sayesinde sizin ana sayfanızın (mainApp) arkasında kalır ve görülmez.
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'absolute';
+            wrapper.style.top = '0';
+            wrapper.style.left = '0';
+            wrapper.style.zIndex = '-1'; 
+            wrapper.style.pointerEvents = 'none'; // Yanlışlıkla tıklamayı önler
 
-            // ÇÖKME VE DONMA ENGELLEYİCİ - Maksimum 100 kayıt
-            const MAX_ROWS = 100;
-            const dataToRender = filteredData.slice(0, MAX_ROWS);
-            
-            let warningHTML = "";
-            if (filteredData.length > MAX_ROWS) {
-                warningHTML = `
-                <div style="background-color: #fef2f2; border: 1px dashed #ef4444; color: #b91c1c; padding: 12px; border-radius: 8px; text-align: center; font-size: 11px; font-weight: bold; margin-bottom: 15px;">
-                    DİKKAT: Veri boyutunun PDF sayfa sınırlarını aşmaması için aşağıdaki detay listesinde sadece son ${MAX_ROWS} çağrı gösterilmektedir. Yukarıdaki istatistik kutuları ${filteredData.length} çağrının tamamını kapsamaktadır.
-                </div>`;
-            }
-
-            const tableRows = dataToRender.map(item => `
-                <tr style="page-break-inside: avoid; border-bottom: 1px solid #f1f5f9;">
-                    <td style="padding: 8px 10px; font-size: 11px; color: #64748b;">${formatDisplayDate(item.tarih)}</td>
-                    <td style="padding: 8px 10px; font-size: 11px; font-weight: bold; color: #1e293b;">${item.musteri}</td>
-                    <td style="padding: 8px 10px; font-size: 11px; color: #475569;">${item.konu || '-'}</td>
-                    <td style="padding: 8px 10px; font-size: 11px; font-weight: bold; color: #0f172a;">${item.durum || '-'}</td>
-                    <td style="padding: 8px 10px; font-size: 11px; color: #64748b;">${item.bolge || '-'}</td>
-                </tr>
-            `).join('');
-
-            content.innerHTML = `
-                <div style="padding: 40px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1e293b; background: white;">
+            // Tam 1 A4 sayfası yüksekliği ve genişliği (794px genişlik x 1122px yükseklik)
+            wrapper.innerHTML = `
+                <div id="pdfCaptureArea" style="width: 794px; height: 1122px; padding: 50px; background-color: #ffffff; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
                     
-                    <div style="text-align: center; border-bottom: 3px solid #0ea5e9; padding-bottom: 15px; margin-bottom: 30px;">
-                        <h1 style="color: #0369a1; font-size: 26px; font-weight: 800; margin: 0; letter-spacing: 1px;">HEDEF AVM</h1>
-                        <h2 style="color: #64748b; font-size: 14px; margin: 5px 0 0 0; text-transform: uppercase; letter-spacing: 2px;">Performans Özeti</h2>
-                    </div>
-
-                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px 20px; margin-bottom: 30px; display: flex; justify-content: space-between;">
-                        <div>
-                            <p style="margin: 0; font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">Temsilci</p>
-                            <p style="margin: 3px 0 0 0; font-size: 16px; font-weight: bold; color: #0f172a;">${agentText}</p>
-                        </div>
-                        <div style="text-align: right;">
-                            <p style="margin: 0; font-size: 11px; color: #64748b; font-weight: bold; text-transform: uppercase;">Rapor Dönemi</p>
-                            <p style="margin: 3px 0 0 0; font-size: 16px; font-weight: bold; color: #0f172a;">${periodText}</p>
-                        </div>
-                    </div>
-
-                    <div style="display: flex; gap: 15px; margin-bottom: 30px;">
-                        <div style="flex: 1; padding: 15px; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; text-align: center;">
-                            <div style="font-size: 11px; color: #3b82f6; font-weight: bold; text-transform: uppercase; margin-bottom: 5px;">Toplam Çağrı</div>
-                            <div style="font-size: 24px; font-weight: 800; color: #1e3a8a;">${totalCalls}</div>
-                        </div>
-                        <div style="flex: 1; padding: 15px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; text-align: center;">
-                            <div style="font-size: 11px; color: #10b981; font-weight: bold; text-transform: uppercase; margin-bottom: 5px;">Çözümlenen</div>
-                            <div style="font-size: 24px; font-weight: 800; color: #064e3b;">${resolvedCalls}</div>
-                        </div>
-                        <div style="flex: 1; padding: 15px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; text-align: center;">
-                            <div style="font-size: 11px; color: #f59e0b; font-weight: bold; text-transform: uppercase; margin-bottom: 5px;">Bekleyen</div>
-                            <div style="font-size: 24px; font-weight: 800; color: #78350f;">${pendingCalls}</div>
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 30px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span style="font-size: 12px; font-weight: bold; color: #334155;">Genel Çözüm Oranı</span>
-                            <span style="font-size: 14px; font-weight: bold; color: #10b981;">%${successRate}</span>
-                        </div>
-                        <div style="width: 100%; background-color: #e2e8f0; border-radius: 8px; height: 10px; overflow: hidden;">
-                            <div style="width: ${successRate}%; background-color: #10b981; height: 100%; border-radius: 8px;"></div>
-                        </div>
-                    </div>
-
-                    ${warningHTML}
-
-                    <h3 style="font-size: 14px; color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 5px; margin-bottom: 10px; font-weight: bold;">Detaylı Çağrı Listesi</h3>
-                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                        <thead>
-                            <tr style="background-color: #f1f5f9;">
-                                <th style="padding: 10px; font-size: 11px; color: #475569; font-weight: 800; text-transform: uppercase;">Tarih</th>
-                                <th style="padding: 10px; font-size: 11px; color: #475569; font-weight: 800; text-transform: uppercase;">Müşteri</th>
-                                <th style="padding: 10px; font-size: 11px; color: #475569; font-weight: 800; text-transform: uppercase;">Konu</th>
-                                <th style="padding: 10px; font-size: 11px; color: #475569; font-weight: 800; text-transform: uppercase;">Durum</th>
-                                <th style="padding: 10px; font-size: 11px; color: #475569; font-weight: 800; text-transform: uppercase;">Bölge</th>
+                    <div style="border: 2px solid #0ea5e9; border-radius: 24px; padding: 40px; background: #ffffff;">
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+                            <tr>
+                                <td style="text-align: center; padding-bottom: 20px;">
+                                    <div style="color: #0ea5e9; font-size: 48px; font-weight: 900; margin: 0; letter-spacing: -2px;">HEDEF AVM</div>
+                                    <div style="color: #94a3b8; font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 6px; font-weight: 700;">PERFORMANS ÖZETİ</div>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            ${tableRows}
-                        </tbody>
-                    </table>
+                        </table>
 
-                    <div style="margin-top: 40px; text-align: center; color: #94a3b8; font-size: 10px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
-                        Rapor Oluşturulma Tarihi: ${new Date().toLocaleDateString('tr-TR')} ${new Date().toLocaleTimeString('tr-TR')} | Otomatik Üretilmiştir.
+                        <table style="width: 100%; margin-bottom: 40px; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 25px; width: 50%; border-right: 1px solid #e2e8f0;">
+                                    <div style="font-size: 12px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">TEMSİLCİ</div>
+                                    <div style="font-size: 24px; color: #0f172a; font-weight: 900;">${agentText}</div>
+                                </td>
+                                <td style="padding: 25px; width: 50%; text-align: right;">
+                                    <div style="font-size: 12px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">DÖNEM</div>
+                                    <div style="font-size: 24px; color: #0f172a; font-weight: 900;">${periodText}</div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table style="width: 100%; border-collapse: separate; border-spacing: 12px 0; margin-left: -12px; margin-right: -12px; margin-bottom: 40px;">
+                            <tr>
+                                <td style="width: 33.33%; background: #f0f9ff; border: 2px solid #bae6fd; border-radius: 20px; padding: 30px; text-align: center;">
+                                    <div style="font-size: 12px; color: #0ea5e9; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">TOPLAM ÇAĞRI</div>
+                                    <div style="font-size: 48px; font-weight: 950; color: #0369a1;">${stats.total}</div>
+                                </td>
+                                <td style="width: 33.33%; background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 20px; padding: 30px; text-align: center;">
+                                    <div style="font-size: 12px; color: #16a34a; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">ÇÖZÜLEN</div>
+                                    <div style="font-size: 48px; font-weight: 950; color: #166534;">${stats.resolved}</div>
+                                </td>
+                                <td style="width: 33.33%; background: #fffbeb; border: 2px solid #fef08a; border-radius: 20px; padding: 30px; text-align: center;">
+                                    <div style="font-size: 12px; color: #d97706; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">BEKLEYEN</div>
+                                    <div style="font-size: 48px; font-weight: 950; color: #92400e;">${stats.pending}</div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div style="background: #ffffff; border: 2px solid #f1f5f9; border-radius: 24px; padding: 35px; margin-bottom: 40px;">
+                            <table style="width: 100%; margin-bottom: 15px; border-collapse: collapse;">
+                                <tr>
+                                    <td style="font-size: 20px; font-weight: 900; color: #1e293b;">BAŞARI ORANI</td>
+                                    <td style="text-align: right; font-size: 26px; font-weight: 950; color: #0ea5e9;">${stats.rate}</td>
+                                </tr>
+                            </table>
+                            <div style="width: 100%; background: #f1f5f9; height: 18px; border-radius: 12px; overflow: hidden;">
+                                <div style="width: ${stats.rate}; background: #0ea5e9; height: 100%; border-radius: 12px;"></div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: center; border-top: 2px dashed #f1f5f9; padding-top: 30px; color: #94a3b8; font-size: 12px; font-weight: 600; letter-spacing: 1px;">
+                            ${new Date().toLocaleDateString('tr-TR')} • HEDEF AVM YÖNETİM SİSTEMİ
+                        </div>
                     </div>
                 </div>
             `;
 
-            const safeAgent = agentText === 'Tüm Temsilciler' ? 'Genel' : agentText.replace(/\s+/g, '_');
-            const safePeriod = periodText === 'Tüm Zamanlar' ? 'Genel' : periodText.replace(/\s+/g, '_');
-
-            const opt = {
-                margin:       10,
-                filename:     `Performans_${safeAgent}_${safePeriod}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
+            document.body.appendChild(wrapper);
 
             const btn = document.getElementById('pdfBtn');
-            const oldText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i> Hazırlanıyor...';
             btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i> RAPOR HAZIRLANIYOR...';
 
+            // 2. KESİN ÇÖZÜM: Beyaz çıkmasını engellemek için scroll'u anlık olarak 0'a çekiyoruz
+            const currentScroll = window.scrollY;
+            window.scrollTo(0, 0);
+
+            const opt = {
+                margin: 0,
+                filename: `Hedef_AVM_Performans_${agentText.replace(/\s+/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true, 
+                    scrollY: 0,
+                    scrollX: 0
+                },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Biraz bekleme payı ekliyoruz ki tarayıcı render'ı tam oturtsun
             setTimeout(() => {
-                html2pdf().set(opt).from(content).save().then(() => {
-                    btn.innerHTML = oldText;
+                html2pdf().set(opt).from(document.getElementById('pdfCaptureArea')).save().then(() => {
                     btn.disabled = false;
-                    document.body.removeChild(content);
-                }).catch(err => {
-                    console.error("PDF Hatası:", err);
-                    btn.innerHTML = oldText;
+                    btn.innerHTML = '<i class="fas fa-file-pdf text-2xl group-hover:scale-110 transition-transform"></i> PDF RAPORU OLUŞTUR VE İNDİR';
+                    
+                    // İşlem bitince fazlalığı silip kullanıcıyı aşağı geri alıyoruz
+                    document.body.removeChild(wrapper);
+                    window.scrollTo(0, currentScroll);
+                }).catch(e => {
+                    alert("PDF Hatası oluştu.");
                     btn.disabled = false;
-                    if(document.body.contains(content)) document.body.removeChild(content);
-                    alert("PDF oluşturulurken bir hata oluştu.");
+                    btn.innerHTML = 'PDF RAPORU OLUŞTUR VE İNDİR';
+                    if(document.body.contains(wrapper)) document.body.removeChild(wrapper);
                 });
             }, 300);
         }
