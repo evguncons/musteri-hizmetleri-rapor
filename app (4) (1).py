@@ -6,7 +6,7 @@ import os
 # Sayfa Konfigürasyonu
 # -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title=" HEDEF AVM magaza rapor",
+    page_title=" müşteri hizmetleri rapor",
     page_icon="🏆",
     layout="wide"
 )
