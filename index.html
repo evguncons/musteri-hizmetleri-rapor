@@ -6,8 +6,9 @@
     <title>Otomatik Performans Raporu | Hedef AVM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -53,7 +54,7 @@
     </div>
 
     <!-- ANA UYGULAMA -->
-    <div id="mainApp" class="max-w-4xl mx-auto hidden relative z-10">
+    <div id="mainApp" class="max-w-5xl mx-auto hidden relative z-10">
         <header class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm">
             <div class="flex items-center gap-4">
                 <div class="w-14 h-14 bg-brand-600 rounded-2xl flex items-center justify-center text-white shadow-lg transform -rotate-3">
@@ -93,13 +94,13 @@
             </div>
         </div>
 
-        <div class="card p-8 bg-white">
+        <div class="card p-8 bg-white mb-8">
             <div class="flex items-center justify-between mb-8 pb-4 border-b border-slate-100">
                 <h2 class="text-lg font-black text-slate-800 flex items-center gap-2"><i class="fas fa-chart-simple text-brand-500"></i> İstatistik Önizleme</h2>
                 <span id="recordCountBadge" class="bg-slate-100 text-slate-500 px-3 py-1 rounded-lg text-[10px] font-black uppercase border border-slate-200">0 Kayıt</span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-slate-50 p-6 rounded-[1.5rem] border border-slate-200 text-center">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Toplam</p>
                     <div id="statTotal" class="text-4xl font-black text-slate-800 leading-none">0</div>
@@ -112,22 +113,49 @@
                     <p class="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-2">Bekleyen</p>
                     <div id="statPending" class="text-4xl font-black text-amber-700 leading-none">0</div>
                 </div>
-                <div class="bg-brand-50 p-6 rounded-[1.5rem] border border-brand-100 text-center">
-                    <p class="text-[10px] font-black text-brand-600 uppercase tracking-widest mb-2">Oran</p>
-                    <div id="statRate" class="text-4xl font-black text-brand-700 leading-none">%0</div>
+            </div>
+        </div>
+
+        <!-- GRAFİKLER -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <div class="card p-6 lg:col-span-2 bg-white">
+                <div class="flex items-center gap-3 mb-6 pb-2 border-b border-slate-100">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><i class="fas fa-chart-bar"></i></div>
+                    <h3 class="text-base font-black text-slate-800 uppercase tracking-wide">En Çok Aranan Konular</h3>
+                </div>
+                <!-- Yükseklik 280px yapılarak orantılı sığması sağlandı -->
+                <div class="h-[280px] w-full relative">
+                    <canvas id="topicChart"></canvas>
                 </div>
             </div>
-
-            <button onclick="generatePDF()" id="pdfBtn" class="w-full py-5 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-2xl shadow-xl shadow-rose-100 transition-all flex items-center justify-center gap-3 text-lg group">
-                <i class="fas fa-file-pdf text-2xl group-hover:scale-110 transition-transform"></i> PDF RAPORU OLUŞTUR VE İNDİR
-            </button>
+            <div class="card p-6 bg-white">
+                 <div class="flex items-center gap-3 mb-6 pb-2 border-b border-slate-100">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fas fa-map-marked-alt"></i></div>
+                    <h3 class="text-base font-black text-slate-800 uppercase tracking-wide">Bölgesel Dağılım</h3>
+                </div>
+                <!-- Yükseklik 280px yapılarak orantılı sığması sağlandı -->
+                <div class="h-[280px] w-full relative">
+                    <canvas id="regionChart"></canvas>
+                </div>
+            </div>
         </div>
+
+        <button onclick="generatePDF()" id="pdfBtn" class="w-full py-5 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-2xl shadow-xl shadow-rose-100 transition-all flex items-center justify-center gap-3 text-lg group">
+            <i class="fas fa-file-pdf text-2xl group-hover:scale-110 transition-transform"></i> PDF RAPORU OLUŞTUR VE İNDİR
+        </button>
+
     </div>
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbzmh0TtUPRgqXpX3mZ7OvytgEg--MBKheEA46hXl7gLTjc23wEahTGugctfGopeikjI4g/exec";
         let allData = [];
         let filteredData = [];
+        let chartInstances = {};
+
+        // Grafik Font Ayarları - İdeal netlik için optimize edildi
+        Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+        Chart.defaults.font.size = 13;
+        Chart.defaults.color = '#475569';
 
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -154,12 +182,12 @@
                     return true;
                 }).map(item => {
                     let temsilciAdi = String(item.temsilci || "").trim().toUpperCase();
-                    // Olası yazım hatasını düzeltip filtreye dahil etmek için
                     if (temsilciAdi === "TUĞÇE TANRIVEDİ") temsilciAdi = "TUĞÇE TANRIVERDİ";
 
                     return {
                         tarih: item.tarih, musteri: item.musteri, 
-                        durum: (item.durum || "").toUpperCase(), 
+                        durum: (item.durum || "").toUpperCase(),
+                        konu: item.konu, bolge: item.bolge, 
                         temsilci: temsilciAdi, 
                         donem: item.donem
                     };
@@ -194,13 +222,84 @@
             const total = filteredData.length;
             const resolved = filteredData.filter(d => d.durum.match(/ÇÖZÜMLENDİ|MEMNUN|İBAN|BİLGİ VERİLDİ/)).length;
             const pending = filteredData.filter(d => d.durum.includes("TEKRAR")).length;
-            const successRate = total > 0 ? Math.round((resolved / total) * 100) : 0;
 
             document.getElementById('statTotal').textContent = total;
             document.getElementById('statResolved').textContent = resolved;
             document.getElementById('statPending').textContent = pending;
-            document.getElementById('statRate').textContent = `%${successRate}`;
             document.getElementById('recordCountBadge').textContent = `${total} Kayıt`;
+
+            const topicCounts = {};
+            const regionCounts = { "İstanbul": 0, "Kocaeli": 0 };
+            
+            filteredData.forEach(r => {
+                const topic = r.konu || "Belirsiz";
+                topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+                
+                const region = r.bolge || "Belirsiz";
+                if (regionCounts[region] !== undefined) {
+                    regionCounts[region]++;
+                } else if (region !== "Belirsiz" && region !== "") {
+                    regionCounts[region] = 1;
+                }
+            });
+
+            const sortedTopics = Object.entries(topicCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            renderCharts(sortedTopics, regionCounts);
+        }
+
+        function renderCharts(topicsData, regionData) {
+            const topicCtx = document.getElementById('topicChart').getContext('2d');
+            if (chartInstances.topic) chartInstances.topic.destroy();
+            chartInstances.topic = new Chart(topicCtx, {
+                type: 'bar',
+                data: {
+                    labels: topicsData.map(i => i[0]),
+                    datasets: [{ label: 'Çağrı Sayısı', data: topicsData.map(i => i[1]), backgroundColor: '#818cf8', borderRadius: 8 }]
+                },
+                options: { 
+                    indexAxis: 'y', 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    animation: { duration: 800 },
+                    plugins: { legend: { display: false } }, 
+                    scales: { 
+                        x: { 
+                            beginAtZero: true,
+                            ticks: { font: { size: 12, weight: '700' }, color: '#475569' }
+                        }, 
+                        y: { 
+                            grid: { display: false },
+                            ticks: { font: { size: 12, weight: '800' }, color: '#1e293b' }
+                        } 
+                    } 
+                }
+            });
+            
+            const regionCtx = document.getElementById('regionChart').getContext('2d');
+            if (chartInstances.region) chartInstances.region.destroy();
+            chartInstances.region = new Chart(regionCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(regionData),
+                    datasets: [{ label: 'Çağrı Sayısı', data: Object.values(regionData), backgroundColor: ['#818cf8', '#10b981'], borderRadius: 8, barThickness: 50 }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    animation: { duration: 800 },
+                    plugins: { legend: { display: false } }, 
+                    scales: { 
+                        y: { 
+                            beginAtZero: true,
+                            ticks: { font: { size: 13, weight: '700' }, color: '#475569' }
+                        }, 
+                        x: { 
+                            grid: { display: false },
+                            ticks: { font: { size: 14, weight: '800' }, color: '#1e293b' }
+                        } 
+                    } 
+                }
+            });
         }
 
         function generatePDF() {
@@ -212,76 +311,114 @@
             const stats = {
                 total: document.getElementById('statTotal').textContent,
                 resolved: document.getElementById('statResolved').textContent,
-                pending: document.getElementById('statPending').textContent,
-                rate: document.getElementById('statRate').textContent
+                pending: document.getElementById('statPending').textContent
             };
 
-            // 1. KESİN ÇÖZÜM: Beyaz sayfa sorununu engellemek için element DOM'un en üstüne eklenir
-            // z-index: -1 sayesinde sizin ana sayfanızın (mainApp) arkasında kalır ve görülmez.
+            // PDF'te dev gibi çıkan grafik resimleri yerine şık tablolar hazırlıyoruz
+            const topicCounts = {};
+            const regionCounts = { "İstanbul": 0, "Kocaeli": 0 };
+            
+            filteredData.forEach(r => {
+                const topic = r.konu || "Belirsiz";
+                topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+                const region = r.bolge || "Belirsiz";
+                if (regionCounts[region] !== undefined) {
+                    regionCounts[region]++;
+                } else if (region !== "Belirsiz" && region !== "") {
+                    regionCounts[region] = 1;
+                }
+            });
+
+            const sortedTopics = Object.entries(topicCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+            let topicsHTML = '<table style="width:100%; border-collapse: collapse;">';
+            if(sortedTopics.length === 0) topicsHTML += '<tr><td style="color:#94a3b8; font-size:13px; padding:10px 0;">Kayıt bulunamadı</td></tr>';
+            sortedTopics.forEach(item => {
+                topicsHTML += `
+                    <tr>
+                        <td style="padding: 12px 0; font-size: 12px; color: #475569; font-weight: 800; border-bottom: 1px solid #f1f5f9; text-transform: uppercase;">${item[0]}</td>
+                        <td style="padding: 12px 0; font-size: 18px; color: #0ea5e9; font-weight: 900; text-align: right; border-bottom: 1px solid #f1f5f9;">${item[1]}</td>
+                    </tr>
+                `;
+            });
+            topicsHTML += '</table>';
+
+            let regionsHTML = '<table style="width:100%; border-collapse: collapse;">';
+            Object.entries(regionCounts).forEach(item => {
+                regionsHTML += `
+                    <tr>
+                        <td style="padding: 12px 0; font-size: 13px; color: #475569; font-weight: 800; border-bottom: 1px solid #f1f5f9; text-transform: uppercase;">${item[0]}</td>
+                        <td style="padding: 12px 0; font-size: 18px; color: #10b981; font-weight: 900; text-align: right; border-bottom: 1px solid #f1f5f9;">${item[1]}</td>
+                    </tr>
+                `;
+            });
+            regionsHTML += '</table>';
+
             const wrapper = document.createElement('div');
             wrapper.style.position = 'absolute';
             wrapper.style.top = '0';
             wrapper.style.left = '0';
             wrapper.style.zIndex = '-1'; 
-            wrapper.style.pointerEvents = 'none'; // Yanlışlıkla tıklamayı önler
+            wrapper.style.pointerEvents = 'none';
 
-            // Tam 1 A4 sayfası yüksekliği ve genişliği (794px genişlik x 1122px yükseklik)
             wrapper.innerHTML = `
-                <div id="pdfCaptureArea" style="width: 794px; height: 1122px; padding: 50px; background-color: #ffffff; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+                <div id="pdfCaptureArea" style="width: 794px; height: 1122px; padding: 40px; background-color: #ffffff; box-sizing: border-box; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
                     
-                    <div style="border: 2px solid #0ea5e9; border-radius: 24px; padding: 40px; background: #ffffff;">
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px;">
+                    <div style="border: 2px solid #0ea5e9; border-radius: 20px; padding: 25px; background: #ffffff;">
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                             <tr>
-                                <td style="text-align: center; padding-bottom: 20px;">
-                                    <div style="color: #0ea5e9; font-size: 48px; font-weight: 900; margin: 0; letter-spacing: -2px;">HEDEF AVM</div>
-                                    <div style="color: #94a3b8; font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 6px; font-weight: 700;">PERFORMANS ÖZETİ</div>
+                                <td style="text-align: center; padding-bottom: 10px;">
+                                    <div style="color: #0ea5e9; font-size: 36px; font-weight: 900; margin: 0; letter-spacing: -1px;">HEDEF AVM</div>
+                                    <div style="color: #94a3b8; font-size: 12px; margin-top: 5px; text-transform: uppercase; letter-spacing: 6px; font-weight: 800;">PERFORMANS ÖZETİ</div>
                                 </td>
                             </tr>
                         </table>
 
-                        <table style="width: 100%; margin-bottom: 40px; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; border-collapse: collapse;">
+                        <table style="width: 100%; margin-bottom: 20px; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; border-collapse: collapse;">
                             <tr>
-                                <td style="padding: 25px; width: 50%; border-right: 1px solid #e2e8f0;">
-                                    <div style="font-size: 12px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">TEMSİLCİ</div>
-                                    <div style="font-size: 24px; color: #0f172a; font-weight: 900;">${agentText}</div>
+                                <td style="padding: 15px 25px; width: 50%; border-right: 1px solid #e2e8f0;">
+                                    <div style="font-size: 11px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">TEMSİLCİ</div>
+                                    <div style="font-size: 18px; color: #0f172a; font-weight: 900;">${agentText}</div>
                                 </td>
-                                <td style="padding: 25px; width: 50%; text-align: right;">
-                                    <div style="font-size: 12px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">DÖNEM</div>
-                                    <div style="font-size: 24px; color: #0f172a; font-weight: 900;">${periodText}</div>
+                                <td style="padding: 15px 25px; width: 50%; text-align: right;">
+                                    <div style="font-size: 11px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">DÖNEM</div>
+                                    <div style="font-size: 18px; color: #0f172a; font-weight: 900;">${periodText}</div>
                                 </td>
                             </tr>
                         </table>
 
-                        <table style="width: 100%; border-collapse: separate; border-spacing: 12px 0; margin-left: -12px; margin-right: -12px; margin-bottom: 40px;">
+                        <table style="width: 100%; border-collapse: separate; border-spacing: 12px 0; margin-left: -12px; margin-right: -12px; margin-bottom: 20px;">
                             <tr>
-                                <td style="width: 33.33%; background: #f0f9ff; border: 2px solid #bae6fd; border-radius: 20px; padding: 30px; text-align: center;">
-                                    <div style="font-size: 12px; color: #0ea5e9; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">TOPLAM ÇAĞRI</div>
-                                    <div style="font-size: 48px; font-weight: 950; color: #0369a1;">${stats.total}</div>
+                                <td style="width: 33.33%; background: #f0f9ff; border: 2px solid #bae6fd; border-radius: 16px; padding: 20px; text-align: center;">
+                                    <div style="font-size: 11px; color: #0ea5e9; font-weight: 800; text-transform: uppercase; margin-bottom: 6px;">TOPLAM ÇAĞRI</div>
+                                    <div style="font-size: 36px; font-weight: 950; color: #0369a1;">${stats.total}</div>
                                 </td>
-                                <td style="width: 33.33%; background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 20px; padding: 30px; text-align: center;">
-                                    <div style="font-size: 12px; color: #16a34a; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">ÇÖZÜLEN</div>
-                                    <div style="font-size: 48px; font-weight: 950; color: #166534;">${stats.resolved}</div>
+                                <td style="width: 33.33%; background: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 16px; padding: 20px; text-align: center;">
+                                    <div style="font-size: 11px; color: #16a34a; font-weight: 800; text-transform: uppercase; margin-bottom: 6px;">ÇÖZÜLEN</div>
+                                    <div style="font-size: 36px; font-weight: 950; color: #166534;">${stats.resolved}</div>
                                 </td>
-                                <td style="width: 33.33%; background: #fffbeb; border: 2px solid #fef08a; border-radius: 20px; padding: 30px; text-align: center;">
-                                    <div style="font-size: 12px; color: #d97706; font-weight: 800; text-transform: uppercase; margin-bottom: 10px;">BEKLEYEN</div>
-                                    <div style="font-size: 48px; font-weight: 950; color: #92400e;">${stats.pending}</div>
+                                <td style="width: 33.33%; background: #fffbeb; border: 2px solid #fef08a; border-radius: 16px; padding: 20px; text-align: center;">
+                                    <div style="font-size: 11px; color: #d97706; font-weight: 800; text-transform: uppercase; margin-bottom: 6px;">BEKLEYEN</div>
+                                    <div style="font-size: 36px; font-weight: 950; color: #92400e;">${stats.pending}</div>
                                 </td>
                             </tr>
                         </table>
 
-                        <div style="background: #ffffff; border: 2px solid #f1f5f9; border-radius: 24px; padding: 35px; margin-bottom: 40px;">
-                            <table style="width: 100%; margin-bottom: 15px; border-collapse: collapse;">
-                                <tr>
-                                    <td style="font-size: 20px; font-weight: 900; color: #1e293b;">BAŞARI ORANI</td>
-                                    <td style="text-align: right; font-size: 26px; font-weight: 950; color: #0ea5e9;">${stats.rate}</td>
-                                </tr>
-                            </table>
-                            <div style="width: 100%; background: #f1f5f9; height: 18px; border-radius: 12px; overflow: hidden;">
-                                <div style="width: ${stats.rate}; background: #0ea5e9; height: 100%; border-radius: 12px;"></div>
-                            </div>
-                        </div>
+                        <!-- GRAFİKLER YERİNE ŞIK TABLOLAR (Dev gibi durmaması ve rakamların net görünmesi için) -->
+                        <table style="width: 100%; border-collapse: separate; border-spacing: 15px 0; margin-left: -15px; margin-right: -15px;">
+                            <tr>
+                                <td style="width: 55%; background: #ffffff; border: 2px solid #f1f5f9; border-radius: 16px; padding: 25px; vertical-align: top; box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.05);">
+                                    <div style="font-size: 14px; font-weight: 900; color: #1e293b; margin-bottom: 10px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; text-transform: uppercase;">En Çok Aranan Konular</div>
+                                    ${topicsHTML}
+                                </td>
+                                <td style="width: 45%; background: #ffffff; border: 2px solid #f1f5f9; border-radius: 16px; padding: 25px; vertical-align: top; box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.05);">
+                                    <div style="font-size: 14px; font-weight: 900; color: #1e293b; margin-bottom: 10px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; text-transform: uppercase;">Bölgesel Dağılım</div>
+                                    ${regionsHTML}
+                                </td>
+                            </tr>
+                        </table>
 
-                        <div style="text-align: center; border-top: 2px dashed #f1f5f9; padding-top: 30px; color: #94a3b8; font-size: 12px; font-weight: 600; letter-spacing: 1px;">
+                        <div style="text-align: center; border-top: 2px dashed #f1f5f9; padding-top: 15px; margin-top: 20px; color: #94a3b8; font-size: 11px; font-weight: 700; letter-spacing: 1px;">
                             ${new Date().toLocaleDateString('tr-TR')} • HEDEF AVM YÖNETİM SİSTEMİ
                         </div>
                     </div>
@@ -294,7 +431,6 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin text-xl"></i> RAPOR HAZIRLANIYOR...';
 
-            // 2. KESİN ÇÖZÜM: Beyaz çıkmasını engellemek için scroll'u anlık olarak 0'a çekiyoruz
             const currentScroll = window.scrollY;
             window.scrollTo(0, 0);
 
@@ -311,13 +447,11 @@
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            // Biraz bekleme payı ekliyoruz ki tarayıcı render'ı tam oturtsun
             setTimeout(() => {
                 html2pdf().set(opt).from(document.getElementById('pdfCaptureArea')).save().then(() => {
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fas fa-file-pdf text-2xl group-hover:scale-110 transition-transform"></i> PDF RAPORU OLUŞTUR VE İNDİR';
                     
-                    // İşlem bitince fazlalığı silip kullanıcıyı aşağı geri alıyoruz
                     document.body.removeChild(wrapper);
                     window.scrollTo(0, currentScroll);
                 }).catch(e => {
