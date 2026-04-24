@@ -71,7 +71,7 @@
         </header>
 
         <div class="card p-8 mb-8 bg-white">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Temsilci Seçin</label>
                     <select id="agentFilter" class="input-field select-field" onchange="updateDashboard()">
@@ -83,6 +83,14 @@
                         <option value="CANSU IŞIK">CANSU IŞIK</option>
                         <option value="TUĞÇE TANRIVERDİ">TUĞÇE TANRIVERDİ</option>
                         <option value="ESRA ERDOĞAN">ESRA ERDOĞAN</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Şube Seçin</label>
+                    <select id="regionFilter" class="input-field select-field" onchange="updateDashboard()">
+                        <option value="all">Tüm Şubeler</option>
+                        <option value="İstanbul">İstanbul</option>
+                        <option value="Kocaeli">Kocaeli</option>
                     </select>
                 </div>
                 <div>
@@ -214,10 +222,12 @@
         function updateDashboard() {
             const agentVal = document.getElementById('agentFilter').value;
             const periodVal = document.getElementById('periodFilter').value;
+            const regionVal = document.getElementById('regionFilter').value;
 
             filteredData = allData;
             if (agentVal !== 'all') filteredData = filteredData.filter(d => d.temsilci === agentVal);
             if (periodVal !== 'all') filteredData = filteredData.filter(d => d.donem === periodVal);
+            if (regionVal !== 'all') filteredData = filteredData.filter(d => d.bolge === regionVal);
 
             const total = filteredData.length;
             const resolved = filteredData.filter(d => d.durum.match(/ÇÖZÜMLENDİ|MEMNUN|İBAN|BİLGİ VERİLDİ/)).length;
@@ -305,8 +315,11 @@
         function generatePDF() {
             const agentSelect = document.getElementById('agentFilter');
             const periodSelect = document.getElementById('periodFilter');
+            const regionSelect = document.getElementById('regionFilter');
+            
             const agentText = agentSelect.options[agentSelect.selectedIndex].text;
             const periodText = periodSelect.options[periodSelect.selectedIndex].text;
+            const regionText = regionSelect.options[regionSelect.selectedIndex].text;
             
             const stats = {
                 total: document.getElementById('statTotal').textContent,
@@ -376,11 +389,15 @@
 
                         <table style="width: 100%; margin-bottom: 20px; background: #f8fafc; border-radius: 16px; border: 1px solid #e2e8f0; border-collapse: collapse;">
                             <tr>
-                                <td style="padding: 15px 25px; width: 50%; border-right: 1px solid #e2e8f0;">
+                                <td style="padding: 15px 25px; width: 33.33%; border-right: 1px solid #e2e8f0;">
                                     <div style="font-size: 11px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">TEMSİLCİ</div>
                                     <div style="font-size: 18px; color: #0f172a; font-weight: 900;">${agentText}</div>
                                 </td>
-                                <td style="padding: 15px 25px; width: 50%; text-align: right;">
+                                <td style="padding: 15px 25px; width: 33.33%; border-right: 1px solid #e2e8f0; text-align: center;">
+                                    <div style="font-size: 11px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">ŞUBE</div>
+                                    <div style="font-size: 18px; color: #0f172a; font-weight: 900;">${regionText}</div>
+                                </td>
+                                <td style="padding: 15px 25px; width: 33.33%; text-align: right;">
                                     <div style="font-size: 11px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">DÖNEM</div>
                                     <div style="font-size: 18px; color: #0f172a; font-weight: 900;">${periodText}</div>
                                 </td>
@@ -436,7 +453,7 @@
 
             const opt = {
                 margin: 0,
-                filename: `Hedef_AVM_Performans_${agentText.replace(/\s+/g, '_')}.pdf`,
+                filename: `Hedef_AVM_Performans_${agentText.replace(/\s+/g, '_')}_${regionText.replace(/\s+/g, '_')}.pdf`,
                 image: { type: 'jpeg', quality: 1 },
                 html2canvas: { 
                     scale: 2, 
