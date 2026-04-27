@@ -192,10 +192,16 @@
                     let temsilciAdi = String(item.temsilci || "").trim().toUpperCase();
                     if (temsilciAdi === "TUĞÇE TANRIVEDİ") temsilciAdi = "TUĞÇE TANRIVERDİ";
 
+                    // Konu isimlerindeki "boşluklu/boşluksuz" yazım farklılıklarını tek standartta birleştir
+                    let konuAdi = String(item.konu || "Belirsiz").trim().toUpperCase();
+                    if (konuAdi.includes("TAKSİT İŞLEMLERİ") && konuAdi.includes("BORÇ BİLGİSİ")) {
+                        konuAdi = "TAKSİT İŞLEMLERİ/BORÇ BİLGİSİ";
+                    }
+
                     return {
                         tarih: item.tarih, musteri: item.musteri, 
                         durum: (item.durum || "").toUpperCase(),
-                        konu: item.konu, bolge: item.bolge, 
+                        konu: konuAdi, bolge: item.bolge, 
                         temsilci: temsilciAdi, 
                         donem: item.donem
                     };
